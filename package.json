@@ -1,0 +1,22 @@
+{
+  "name": "v8apps",
+  "version": "1.0.0",
+  "description": "Node Js application",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "keywords": [
+    "node"
+  ],
+  "author": "Lawrence Onah",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "mysql2": "^1.6.4",
+    "sequelize": "^4.42.0"
+  }
+}

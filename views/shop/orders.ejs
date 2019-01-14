@@ -1,0 +1,24 @@
+<%- include('../partials/header.ejs') %>
+</head>
+
+<body>
+<%- include('../partials/navigation.ejs') %>
+<main>
+    <% if (orders.length <= 0) { %>
+        <h1>Nothing there!</h1>
+    <% } else { %>
+        <ul>
+            <% orders.forEach(order => { %>
+                <li>
+                    <h1># <%= order.id %></h1>
+                    <ul>
+                        <% order.products.forEach(product => { %>
+                            <li><%= product.title %> (<%= product.order_items.quantity %>)</li>
+                        <% }) %>
+                    </ul>
+                </li>
+            <% }) %>
+        </ul>
+    <% } %>
+</main>
+<%- include('../partials/footer.ejs') %>
