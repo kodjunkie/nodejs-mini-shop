@@ -9,34 +9,30 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 const adminRoutes = require('./routes/admin');
-// const shopRoutes = require('./routes/shop');
+const shopRoutes = require('./routes/shop');
 
 const errorController = require('./controllers/error');
 
-const mongoConnect = require('./util/database');
-// const Product = require('./models/product');
-// const User = require('./models/user');
-// const Cart = require('./models/cart');
-// const CartItem = require('./models/cart-item');
-// const Order = require('./models/order');
-// const OrderItem = require('./models/order-item');
+const {mongoConnect} = require('./util/database');
+const User = require('./models/user');
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
-    /*User.findByPk(1)
+    User.findById('5c3d1f9ae688980ee3c086d5')
         .then(user => {
-            req.user = user;
+            req.user = new User(user.name, user.email, user.cart, user._id);
             next();
         })
-        .catch(err => console.log(err));*/
+        .catch(err => console.log(err));
 });
 
 app.use('/admin', adminRoutes);
-// app.use(shopRoutes);
+app.use(shopRoutes);
+
 app.use(errorController.get404);
 
 mongoConnect(() => {
-    app.listen(2000);
+    app.listen(3000);
 });
