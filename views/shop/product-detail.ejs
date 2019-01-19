@@ -13,6 +13,8 @@
         </div>
         <h2>$<%= product.price %></h2>
         <p><%= product.description %></p>
-        <%- include('../partials/add-to-cart.ejs') %>
+        <% if (isAuthenticated) { %>
+            <%- include('../partials/add-to-cart.ejs', {product}) %>
+        <% } %>
     </main>
     <%- include('../partials/footer.ejs') %>
