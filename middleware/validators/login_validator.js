@@ -7,21 +7,16 @@ module.exports = [
 		.isEmail()
 		.withMessage('Please enter a valid email')
 		.normalizeEmail()
+		.trim()
 		.custom((value, { req }) => {
 			return User.findOne({ email: value }).then(userDoc => {
-				if (userDoc) {
-					return Promise.reject(new Error('E-mail already exists, please pick a different one!'));
+				if (!userDoc) {
+					return Promise.reject(new Error('Your credentials do not match our records!'));
 				}
 				return Promise.resolve(true);
 			});
 		}),
 	body('password')
 		.isLength({ min: 6 })
-		.withMessage('Your password should contain atleast 6 characters'),
-	body('confirmPassword').custom((value, { req }) => {
-		if (value !== req.body.password) {
-			throw new Error('Your password do not match, please try again');
-		}
-		return true;
-	})
+		.withMessage('Your password should contain atleast 6 characters')
 ];

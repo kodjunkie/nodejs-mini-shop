@@ -13,13 +13,26 @@ exports.getLogin = (req, res, next) => {
 	res.render('auth/login', {
 		path: '/login',
 		pageTitle: 'Login',
-		errorMessage: req.flash('error')
+		errorMessage: req.flash('error'),
+		oldInput: { email: '' },
+		validationErrors: []
 	});
 };
 
 exports.postLogin = (req, res, next) => {
 	const email = req.body.email;
 	const password = req.body.password;
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).render('auth/login', {
+			path: '/login',
+			pageTitle: 'Signup',
+			errorMessage: errors.array()[0].msg,
+			oldInput: { email: email },
+			validationErrors: errors.array()
+		});
+	}
+
 	User.findOne({ email: email })
 		.then(user => {
 			if (!user) {
@@ -36,7 +49,7 @@ exports.postLogin = (req, res, next) => {
 							if (err) {
 								console.log(err);
 							}
-							res.redirect('/');
+							return res.redirect('/');
 						});
 					}
 					req.flash('error', 'Invalid email or password!');
