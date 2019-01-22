@@ -7,7 +7,11 @@
    <%- include('../partials/navigation.ejs') %>
 
     <main>
+        <% if (errorMessage.length > 0) { %>
+            <div class="user-message user-message--error"><%= errorMessage %></div>
+        <% } %>
         <form class="login-form" action="/login" method="POST">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <div class="form-control">
                 <label for="email">E-Mail</label>
                 <input type="email" name="email" id="email">
@@ -18,5 +22,8 @@
             </div>
             <button class="btn" type="submit">Login</button>
         </form>
+        <div class="centered">
+            <a href="/reset">Reset Password</a>
+        </div>
     </main>
 <%- include('../partials/footer.ejs') %>

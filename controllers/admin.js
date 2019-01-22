@@ -4,8 +4,7 @@ exports.getAddProduct = (req, res, next) => {
 	res.render('admin/edit-product', {
 		pageTitle: 'Add Product',
 		path: '/admin/add-product',
-		editing: false,
-		isAuthenticated: false
+		editing: false
 	});
 };
 
@@ -18,9 +17,12 @@ exports.postAddProduct = (req, res, next) => {
 		imageUrl: inputs.imageUrl,
 		userId: req.user._id
 	});
-	product.save().then(() => {
-		res.redirect('/');
-	}).catch(err => console.log(err));
+	product
+		.save()
+		.then(() => {
+			res.redirect('/');
+		})
+		.catch(err => console.log(err));
 };
 
 exports.getEditProduct = (req, res, next) => {
@@ -34,8 +36,7 @@ exports.getEditProduct = (req, res, next) => {
 				pageTitle: 'Edit Product',
 				path: '/admin/add-product',
 				product,
-				editing: editMode,
-				isAuthenticated: false
+				editing: editMode
 			});
 		})
 		.catch(err => console.log(err));
@@ -45,34 +46,37 @@ exports.postEditProduct = (req, res, next) => {
 	const inputs = req.body;
 	Product.findById(inputs.productId)
 		.then(product => {
+			if (product.userId.toString() !== req.user._id.toString()) {
+				return res.redirect('/');
+			}
 			product.title = inputs.title;
 			product.price = inputs.price;
 			product.description = inputs.description;
 			product.imageUrl = inputs.imageUrl;
-			return product.save();
-		})
-		.then(() => {
-			res.redirect('/admin/products');
+			return product.save().then(() => {
+				res.redirect('/admin/products');
+			});
 		})
 		.catch(err => console.log(err));
 };
 
 exports.getProducts = (req, res, next) => {
-	Product.find()
+	Product.find({ userId: req.user._id })
 		.then(products => {
 			res.render('admin/products', {
 				prods: products,
 				pageTitle: 'Admin Products',
-				path: '/admin/products',
-				isAuthenticated: false
+				path: '/admin/products'
 			});
 		})
 		.catch(err => console.log(err));
 };
 
 exports.postDeleteProduct = (req, res, next) => {
-	Product.findByIdAndRemove(req.body.productId)
-		.then(() => {
-			res.redirect('/admin/products');
-		});
+	Product.deleteOne({
+		_id: req.body.productId,
+		userId: req.user._id
+	}).then(() => {
+		res.redirect('/admin/products');
+	});
 };
