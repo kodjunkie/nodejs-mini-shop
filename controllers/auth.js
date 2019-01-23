@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const sgMail = require('@sendgrid/mail');
 const { validationResult } = require('express-validator/check');
 
+const errorHandler = require('../util/error_handler');
 const User = require('../models/user');
 
 require('dotenv').config();
@@ -60,7 +61,7 @@ exports.postLogin = (req, res, next) => {
 					res.redirect('/login');
 				});
 		})
-		.catch(err => console.log(err));
+		.catch(err => errorHandler(err, next));
 };
 
 exports.postLogout = (req, res, next) => {
@@ -123,7 +124,7 @@ exports.postSignup = (req, res, next) => {
 			);
 		})
 		.catch(err => {
-			console.log(err);
+			return errorHandler(err, next);
 		});
 };
 
@@ -172,7 +173,7 @@ exports.postReset = (req, res, next) => {
 					}
 				);
 			})
-			.catch(err => console.log(err));
+			.catch(err => errorHandler(err, next));
 	});
 };
 
@@ -191,7 +192,7 @@ exports.getNewPassword = (req, res, next) => {
 				passwordToken: token
 			});
 		})
-		.catch(err => console.log(err));
+		.catch(err => errorHandler(err, next));
 };
 
 exports.postNewPassword = (req, res, next) => {
@@ -215,5 +216,5 @@ exports.postNewPassword = (req, res, next) => {
 		.then(user => {
 			res.redirect('/login');
 		})
-		.catch(err => console.log(err));
+		.catch(err => errorHandler(err, next));
 };
