@@ -1,6 +1,8 @@
 const { validationResult } = require('express-validator/check');
 const Product = require('../models/product');
 
+const errorHandler = require('../util/error_handler');
+
 exports.getAddProduct = (req, res, next) => {
 	res.render('admin/edit-product', {
 		pageTitle: 'Add Product',
@@ -39,7 +41,9 @@ exports.postAddProduct = (req, res, next) => {
 		.then(() => {
 			res.redirect('/');
 		})
-		.catch(err => console.log(err));
+		.catch(err => {
+			return errorHandler(err, next);
+		});
 };
 
 exports.getEditProduct = (req, res, next) => {
@@ -58,7 +62,7 @@ exports.getEditProduct = (req, res, next) => {
 				hasError: false
 			});
 		})
-		.catch(err => console.log(err));
+		.catch(err => errorHandler(err, next));
 };
 
 exports.postEditProduct = (req, res, next) => {
@@ -89,7 +93,7 @@ exports.postEditProduct = (req, res, next) => {
 				res.redirect('/admin/products');
 			});
 		})
-		.catch(err => console.log(err));
+		.catch(err => errorHandler(err, next));
 };
 
 exports.getProducts = (req, res, next) => {
@@ -101,7 +105,7 @@ exports.getProducts = (req, res, next) => {
 				path: '/admin/products'
 			});
 		})
-		.catch(err => console.log(err));
+		.catch(err => errorHandler(err, next));
 };
 
 exports.postDeleteProduct = (req, res, next) => {

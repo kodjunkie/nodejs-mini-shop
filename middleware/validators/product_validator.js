@@ -20,7 +20,7 @@ exports.addProductValidator = [
 		}),
 	body('imageUrl')
 		.trim()
-		.isURL()
+		// .isURL()
 		.withMessage('Image Url must be valid.'),
 	body('price')
 		.trim()
