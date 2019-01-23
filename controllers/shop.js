@@ -1,7 +1,7 @@
 const Product = require('../models/product');
 const Order = require('../models/order');
 
-const errorHandler = require('../util/error_handler')
+const errorHandler = require('../util/error_handler');
 
 exports.getProducts = (req, res, next) => {
 	Product.find()
@@ -23,7 +23,8 @@ exports.getProduct = (req, res, next) => {
 				pageTitle: product.title,
 				path: '/products'
 			});
-		}).catch(err => errorHandler(err, next));
+		})
+		.catch(err => errorHandler(err, next));
 };
 
 exports.getIndex = (req, res, next) => {
@@ -39,7 +40,8 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
-	req.user.populate('cart.items.productId')
+	req.user
+		.populate('cart.items.productId')
 		.execPopulate()
 		.then(user => {
 			const cartProducts = user.cart.items;
@@ -77,7 +79,8 @@ exports.postDeleteCartItem = (req, res, next) => {
 };
 
 exports.getOrders = (req, res, next) => {
-	Order.find().where('user', req.user._id)
+	Order.find()
+		.where('user', req.user._id)
 		.then(orders => {
 			res.render('shop/orders', {
 				path: '/orders',
@@ -89,7 +92,8 @@ exports.getOrders = (req, res, next) => {
 };
 
 exports.postCreateOrder = (req, res, next) => {
-	req.user.addOrder()
+	req.user
+		.addOrder()
 		.then(() => {
 			res.redirect('/orders');
 		})
