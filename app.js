@@ -15,7 +15,6 @@ const store = new MongoDBStore({
 	uri: MONGODB_URI,
 	collection: 'sessions'
 });
-const csrfProtection = csrf();
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -37,8 +36,14 @@ app.use(
 		store: store
 	})
 );
-app.use(csrfProtection);
+app.use(csrf());
 app.use(flash());
+
+app.use((req, res, next) => {
+	res.locals.isAuthenticated = req.session.isLoggedIn;
+	res.locals.csrfToken = req.csrfToken();
+	next();
+});
 
 app.use((req, res, next) => {
 	if (!req.session.user) {
@@ -53,14 +58,8 @@ app.use((req, res, next) => {
 			next();
 		})
 		.catch(err => {
-			throw new Error(err);
+			next(new Error(err));
 		});
-});
-
-app.use((req, res, next) => {
-	res.locals.isAuthenticated = req.session.isLoggedIn;
-	res.locals.csrfToken = req.csrfToken();
-	next();
 });
 
 app.use('/admin', adminRoutes);
@@ -73,7 +72,10 @@ app.use(errorController.get404);
 
 app.use((error, req, res, next) => {
 	if (error) {
-		return res.redirect('/500');
+		res.status(500).render('500', {
+			pageTitle: 'Error!',
+			path: '/500'
+		});
 	}
 	next();
 });
