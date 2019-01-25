@@ -7,6 +7,7 @@ const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
 const flash = require('connect-flash');
+const multer = require('multer');
 
 const MONGODB_URI = 'mongodb://127.0.0.1:27017/v8app';
 
@@ -15,6 +16,23 @@ const store = new MongoDBStore({
 	uri: MONGODB_URI,
 	collection: 'sessions'
 });
+
+const fileStorage = multer.diskStorage({
+	destination: function(req, file, cb) {
+		cb(null, 'uploads');
+	},
+	filename: function(req, file, cb) {
+		cb(null, new Date().toISOString() + '-' + file.originalname);
+	}
+});
+
+const fileFilter = function(req, file, cb) {
+	if (file.mimetype === 'image/png' || file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg') {
+		cb(null, true);
+	} else {
+		cb(null, false);
+	}
+};
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -27,7 +45,9 @@ const errorController = require('./controllers/error');
 const User = require('./models/user');
 
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single('image'));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(
 	session({
 		secret: 'SecretKey',
@@ -72,10 +92,8 @@ app.use(errorController.get404);
 
 app.use((error, req, res, next) => {
 	if (error) {
-		res.status(500).render('500', {
-			pageTitle: 'Error!',
-			path: '/500'
-		});
+		console.log(error);
+		return res.status(500).redirect('/500');
 	}
 	next();
 });

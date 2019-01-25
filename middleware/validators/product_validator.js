@@ -18,10 +18,10 @@ exports.addProductValidator = [
 				return Promise.resolve(true);
 			});
 		}),
-	body('imageUrl')
+	/* body('image')
 		.trim()
-		// .isURL()
-		.withMessage('Image Url must be valid.'),
+		.isURL()
+		.withMessage('Image Url must be valid.'), */
 	body('price')
 		.trim()
 		.isDecimal()
@@ -51,10 +51,10 @@ exports.editProductValidator = [
 				return Promise.resolve(true);
 			});
 		}),
-	body('imageUrl')
+	/* body('imageUrl')
 		.trim()
-		// .isURL()
-		.withMessage('Image Url must be valid.'),
+		.isURL()
+		.withMessage('Image Url must be valid.'), */
 	body('price')
 		.trim()
 		.isDecimal()

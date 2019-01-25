@@ -33,7 +33,7 @@ exports.postAddProduct = (req, res, next) => {
 		title: inputs.title,
 		price: inputs.price,
 		description: inputs.description,
-		imageUrl: inputs.imageUrl,
+		imageUrl: req.file.path,
 		userId: req.user._id
 	});
 	product
@@ -88,7 +88,9 @@ exports.postEditProduct = (req, res, next) => {
 			product.title = inputs.title;
 			product.price = inputs.price;
 			product.description = inputs.description;
-			product.imageUrl = inputs.imageUrl;
+			if (req.file) {
+				product.imageUrl = req.file.path;
+			}
 			return product.save().then(() => {
 				res.redirect('/admin/products');
 			});
