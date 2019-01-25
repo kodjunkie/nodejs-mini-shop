@@ -104,15 +104,28 @@ exports.postCreateOrder = (req, res, next) => {
 };
 
 exports.getOrderInvoice = (req, res, next) => {
-	const invoiceName = 'invoice-' + req.params.orderId + '.pdf';
-	const invoicePath = path.join('data', 'invoices', invoiceName);
-	fs.readFile(invoicePath, (err, invoice) => {
-		if (err) {
-			return next(err);
-		}
+	const orderId = req.params.orderId;
+	Order.findById(orderId)
+		.then(order => {
+			if (!order) {
+				return next(new Error('No order found!'));
+			}
 
-		res.setHeader('Content-Type', 'application/pdf');
-		res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
-		res.send(invoice);
-	});
+			if (order.user.toString() !== req.user._id.toString()) {
+				return next(new Error('Unauthoried!'));
+			}
+
+			const invoiceName = 'invoice-' + orderId + '.pdf';
+			const invoicePath = path.join('data', 'invoices', invoiceName);
+			fs.readFile(invoicePath, (err, invoice) => {
+				if (err) {
+					return next(err);
+				}
+
+				res.setHeader('Content-Type', 'application/pdf');
+				res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
+				res.send(invoice);
+			});
+		})
+		.catch(err => next(err));
 };
