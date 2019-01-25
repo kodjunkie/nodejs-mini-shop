@@ -11,13 +11,12 @@
         <ul class="orders">
             <% orders.map(order => { %>
                 <li class="orders__item">
-                    <h1># <%= order._id %></h1>
+                    <h1># <%= order._id %> - <a href="/orders/<%= order._id %>">Invoice</a></h1>
                     <ul class="orders__products">
                         <% order.items.forEach(p => { %>
                             <li class="orders__products-item"><%= p.productId.title %> (<%= p.quantity %>)</li>
                         <% }) %>
                     </ul>
-                    <a href="/orders/<%= order._id %>">Download Invoice</a>
                 </li>
             <% }) %>
         </ul>
