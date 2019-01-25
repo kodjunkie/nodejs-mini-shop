@@ -1,3 +1,6 @@
+const fs = require('fs');
+const path = require('path');
+
 const Product = require('../models/product');
 const Order = require('../models/order');
 
@@ -100,9 +103,16 @@ exports.postCreateOrder = (req, res, next) => {
 		.catch(err => errorHandler(err, next));
 };
 
-// exports.getCheckout = (req, res, next) => {
-//     res.render('shop/checkout', {
-//         path: '/checkout',
-//         pageTitle: 'Checkout'
-//     });
-// };
+exports.getOrderInvoice = (req, res, next) => {
+	const invoiceName = 'invoice-' + req.params.orderId + '.pdf';
+	const invoicePath = path.join('data', 'invoices', invoiceName);
+	fs.readFile(invoicePath, (err, invoice) => {
+		if (err) {
+			return next(err);
+		}
+
+		res.setHeader('Content-Type', 'application/pdf');
+		res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
+		res.send(invoice);
+	});
+};
