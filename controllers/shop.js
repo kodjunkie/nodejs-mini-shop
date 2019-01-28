@@ -116,6 +116,26 @@ exports.postDeleteCartItem = (req, res, next) => {
 		.catch(err => errorHandler(err, next));
 };
 
+exports.getCheckout = (req, res, next) => {
+	req.user
+		.populate('cart.items.productId')
+		.execPopulate()
+		.then(user => {
+			const cartProducts = user.cart.items;
+			let total = 0;
+			cartProducts.forEach(prod => {
+				total += prod.productId.price;
+			});
+			res.render('shop/checkout', {
+				path: '/checkout',
+				pageTitle: 'Checkout',
+				products: cartProducts,
+				totalSum: total
+			});
+		})
+		.catch(err => errorHandler(err, next));
+};
+
 exports.getOrders = (req, res, next) => {
 	Order.find()
 		.where('user', req.user._id)

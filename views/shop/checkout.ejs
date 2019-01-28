@@ -1,0 +1,20 @@
+<%- include('../partials/header.ejs') %>
+    <link rel="stylesheet" href="/css/cart.css">
+    </head>
+
+    <body>
+        <%- include('../partials/navigation.ejs') %>
+        <main>
+            <ul class="cart__item">
+                <% products.forEach(p => { %>
+                    <li class="cart__item-list">
+                        <h1><%= p.productId.title %></h1>
+                        <h2>Quantity: <%= p.quantity %></h2>
+                    </li>
+                <% }) %>
+            </ul>
+            <div class="centered">
+                <h2>Total: <%= totalSum %></h2>
+            </div>
+        </main>
+        <%- include('../partials/footer.ejs') %>
