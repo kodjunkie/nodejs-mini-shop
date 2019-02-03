@@ -9,11 +9,11 @@ const csrf = require('csurf');
 const flash = require('connect-flash');
 const multer = require('multer');
 
-const MONGODB_URI = 'mongodb://127.0.0.1:27017/v8app';
+require('dotenv').config();
 
 const app = express();
 const store = new MongoDBStore({
-	uri: MONGODB_URI,
+	uri: process.env.MONGODB_URI,
 	collection: 'sessions'
 });
 
@@ -100,7 +100,7 @@ app.use((error, req, res, next) => {
 
 mongoose
 	.connect(
-		MONGODB_URI,
+		process.env.MONGODB_URI,
 		{ useNewUrlParser: true }
 	)
 	.then(() => {
